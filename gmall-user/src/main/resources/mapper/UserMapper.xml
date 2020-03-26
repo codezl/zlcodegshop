@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 注意事项：使用映射接口的配置方式，namespace必须指向接口的类全名 -->
+<mapper namespace="com.atguigu.gmall.user.mapper.UserMapper">
+  <!-- useGeneratedKeys:作用打开支持ID回填，设置为true
+    keyColumn：设置ID回填，ID对象数据库的字段名
+    keyProperty：设置ID回填到JavaBean对应的属性名
+ -->
+
+  <select id="selectAllUser" resultType="com.atguigu.gmall.bean.UmsMember">
+    select t.* from ums_member t
+  </select>
+</mapper>
