@@ -35,7 +35,10 @@ public class AttrServiceImpl implements AttrService {
         PmsBaseAttrInfo pmsBaseAttrInfo = new PmsBaseAttrInfo();
         pmsBaseAttrInfo.setCatalog3Id(catalog3Id);
         List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.select(pmsBaseAttrInfo);
-        for (PmsBaseAttrInfo baseAttrInfo : pmsBaseAttrInfos){
+
+
+        for (PmsBaseAttrInfo baseAttrInfo : pmsBaseAttrInfos) {
+
             List<PmsBaseAttrValue> pmsBaseAttrValues = new ArrayList<>();
             PmsBaseAttrValue pmsBaseAttrValue = new PmsBaseAttrValue();
             pmsBaseAttrValue.setAttrId(baseAttrInfo.getId());
@@ -43,7 +46,6 @@ public class AttrServiceImpl implements AttrService {
             baseAttrInfo.setAttrValueList(pmsBaseAttrValues);
 
         }
-
         return pmsBaseAttrInfos;
     }
 
