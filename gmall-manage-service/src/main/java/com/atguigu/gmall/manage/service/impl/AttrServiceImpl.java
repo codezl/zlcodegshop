@@ -11,11 +11,11 @@ import com.atguigu.gmall.service.AttrService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import sun.security.util.Length;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AttrServiceImpl implements AttrService {
@@ -35,8 +35,6 @@ public class AttrServiceImpl implements AttrService {
         PmsBaseAttrInfo pmsBaseAttrInfo = new PmsBaseAttrInfo();
         pmsBaseAttrInfo.setCatalog3Id(catalog3Id);
         List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.select(pmsBaseAttrInfo);
-
-
         for (PmsBaseAttrInfo baseAttrInfo : pmsBaseAttrInfos) {
 
             List<PmsBaseAttrValue> pmsBaseAttrValues = new ArrayList<>();
@@ -44,8 +42,8 @@ public class AttrServiceImpl implements AttrService {
             pmsBaseAttrValue.setAttrId(baseAttrInfo.getId());
             pmsBaseAttrValues = pmsBaseAttrValueMapper.select(pmsBaseAttrValue);
             baseAttrInfo.setAttrValueList(pmsBaseAttrValues);
-
         }
+
         return pmsBaseAttrInfos;
     }
 
@@ -53,48 +51,37 @@ public class AttrServiceImpl implements AttrService {
     public String saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo) {
 
         String id = pmsBaseAttrInfo.getId();
-        if(StringUtils.isBlank(id)){
-            //idkong baocun
-            //保存属性
+        if (StringUtils.isBlank(id)) {
+            // id为空，保存
+            // 保存属性
             pmsBaseAttrInfoMapper.insertSelective(pmsBaseAttrInfo);//insert insertSelective 是否将null插入数据库
 
-            //保存值
+            // 保存属性值
             List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
             for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
                 pmsBaseAttrValue.setAttrId(pmsBaseAttrInfo.getId());
 
                 pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
             }
-        }else{
-            //xiugai
-            //shuxing
+        } else {
+            // id不空，修改
+
+            // 属性修改
             Example example = new Example(PmsBaseAttrInfo.class);
-            example.createCriteria().andEqualTo("id",pmsBaseAttrInfo.getId());
-            pmsBaseAttrInfoMapper.updateByExampleSelective(pmsBaseAttrInfo,example);
+            example.createCriteria().andEqualTo("id", pmsBaseAttrInfo.getId());
+            pmsBaseAttrInfoMapper.updateByExampleSelective(pmsBaseAttrInfo, example);
 
 
-            //shuxinggzhi
-
-
-            //删除所有属性zhi
+            // 属性值修改
+            // 按照属性id删除所有属性值
             PmsBaseAttrValue pmsBaseAttrValueDel = new PmsBaseAttrValue();
-            String le = pmsBaseAttrInfo.getId();
             pmsBaseAttrValueDel.setAttrId(pmsBaseAttrInfo.getId());
             pmsBaseAttrValueMapper.delete(pmsBaseAttrValueDel);
 
-
-            //shanchu后注入新的值
+            // 删除后，将新的属性值插入
             List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
-            if(attrValueList.isEmpty()){
-                PmsBaseAttrInfo pmsBaseAttrInfo1Del = new PmsBaseAttrInfo();
-                pmsBaseAttrInfo1Del.setId(pmsBaseAttrInfo.getId());
-                pmsBaseAttrInfoMapper.delete(pmsBaseAttrInfo1Del);
-            }else {
-
-                for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
-                    pmsBaseAttrValue.setAttrId(le);
-                    pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
-                }
+            for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
+                pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
             }
 
         }
@@ -117,5 +104,115 @@ public class AttrServiceImpl implements AttrService {
         return pmsBaseSaleAttrMapper.selectAll();
     }
 
+    @Override
+    public List<PmsBaseAttrInfo> getAttrValueListByValueId(Set<String> valueIdSet) {
 
+        String valueIdStr = StringUtils.join(valueIdSet, ",");//41,45,46
+        List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.selectAttrValueListByValueId(valueIdStr);
+        return pmsBaseAttrInfos;
+    }
 }
+
+
+//    @Override
+//    public List<PmsBaseAttrInfo> attrInfoList(String catalog3Id) {
+//
+//        PmsBaseAttrInfo pmsBaseAttrInfo = new PmsBaseAttrInfo();
+//        pmsBaseAttrInfo.setCatalog3Id(catalog3Id);
+//        List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.select(pmsBaseAttrInfo);
+//
+//
+//        for (PmsBaseAttrInfo baseAttrInfo : pmsBaseAttrInfos) {
+//
+//            List<PmsBaseAttrValue> pmsBaseAttrValues = new ArrayList<>();
+//            PmsBaseAttrValue pmsBaseAttrValue = new PmsBaseAttrValue();
+//            pmsBaseAttrValue.setAttrId(baseAttrInfo.getId());
+//            pmsBaseAttrValues = pmsBaseAttrValueMapper.select(pmsBaseAttrValue);
+//            baseAttrInfo.setAttrValueList(pmsBaseAttrValues);
+//
+//        }
+//        return pmsBaseAttrInfos;
+//    }
+//
+//    @Override
+//    public String saveAttrInfo(PmsBaseAttrInfo pmsBaseAttrInfo) {
+//
+//        String id = pmsBaseAttrInfo.getId();
+//        if(StringUtils.isBlank(id)){
+//            //idkong baocun
+//            //保存属性
+//            pmsBaseAttrInfoMapper.insertSelective(pmsBaseAttrInfo);//insert insertSelective 是否将null插入数据库
+//
+//            //保存值
+//            List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
+//            for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
+//                pmsBaseAttrValue.setAttrId(pmsBaseAttrInfo.getId());
+//
+//                pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
+//            }
+//        }else{
+//            //xiugai
+//            //shuxing
+//            Example example = new Example(PmsBaseAttrInfo.class);
+//            example.createCriteria().andEqualTo("id",pmsBaseAttrInfo.getId());
+//            pmsBaseAttrInfoMapper.updateByExampleSelective(pmsBaseAttrInfo,example);
+//
+//
+//            //shuxinggzhi
+//
+//
+//            //删除所有属性zhi
+//            PmsBaseAttrValue pmsBaseAttrValueDel = new PmsBaseAttrValue();
+//            String le = pmsBaseAttrInfo.getId();
+//            pmsBaseAttrValueDel.setAttrId(pmsBaseAttrInfo.getId());
+//            pmsBaseAttrValueMapper.delete(pmsBaseAttrValueDel);
+//
+//
+//            //shanchu后注入新的值
+//            List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
+//            if(attrValueList.isEmpty()){
+//                PmsBaseAttrInfo pmsBaseAttrInfo1Del = new PmsBaseAttrInfo();
+//                pmsBaseAttrInfo1Del.setId(pmsBaseAttrInfo.getId());
+//                pmsBaseAttrInfoMapper.delete(pmsBaseAttrInfo1Del);
+//            }else {
+//
+//                for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
+//                    pmsBaseAttrValue.setAttrId(le);
+//                    pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
+//                }
+//            }
+//
+//        }
+//
+//
+//        return "success";
+//    }
+//
+//    @Override
+//    public List<PmsBaseAttrValue> getAttrValueList(String attrId) {
+//
+//        PmsBaseAttrValue pmsBaseAttrValue = new PmsBaseAttrValue();
+//        pmsBaseAttrValue.setAttrId(attrId);
+//        List<PmsBaseAttrValue> pmsBaseAttrValues = pmsBaseAttrValueMapper.select(pmsBaseAttrValue);
+//        return pmsBaseAttrValues;
+//    }
+//
+//    @Override
+//    public List<PmsBaseSaleAttr> baseSaleAttrList() {
+//        return pmsBaseSaleAttrMapper.selectAll();
+//    }
+//
+//    @Override
+//    public List<PmsBaseAttrInfo> getAttrValueListByValueId(Set<String> valueIdSet) {
+//
+//        String valueIdStr = StringUtils.join(valueIdSet, ",");
+//        List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.selectAttrValueListByValueId(valueIdStr);
+//
+//
+//        return pmsBaseAttrInfos;
+//    }
+//
+//
+//}
+
+

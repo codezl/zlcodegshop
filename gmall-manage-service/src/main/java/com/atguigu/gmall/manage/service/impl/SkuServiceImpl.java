@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.session.SessionProperties;
 import redis.clients.jedis.Jedis;
 
+import java.math.BigDecimal;
 import java.security.Key;
 import java.util.List;
 import java.util.UUID;
@@ -170,16 +171,66 @@ public class SkuServiceImpl implements SkuService {
         return pmsSkuInfos;
     }
 
+    @Override
+    public List<PmsSkuInfo> getAllSku(String catalog3Id) {
+        List<PmsSkuInfo> pmsSkuInfos = pmsSkuInfoMapper.selectAll();
+
+        for (PmsSkuInfo pmsSkuInfo : pmsSkuInfos) {
+            String skuId = pmsSkuInfo.getId();
+
+            PmsSkuAttrValue pmsSkuAttrValue = new PmsSkuAttrValue();
+            pmsSkuAttrValue.setSkuId(skuId);
+            List<PmsSkuAttrValue> select = pmsSkuAttrValueMapper.select(pmsSkuAttrValue);
+
+            pmsSkuInfo.setSkuAttrValueList(select);
+        }
+        return pmsSkuInfos;
+    }
+
+    @Override
+    public boolean checkPrice(String productSkuId, BigDecimal productPrice) {
+        boolean b = false;
+
+        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
+        pmsSkuInfo.setId(productSkuId);
+        PmsSkuInfo pmsSkuInfo1 = pmsSkuInfoMapper.selectOne(pmsSkuInfo);
+
+        BigDecimal price = pmsSkuInfo1.getPrice();
+
+        if (price.compareTo(productPrice)==0){
+            b = true;
+        }
+
+        return b;
+    }
+
 
     //
-    @Override
-    public PmsSkuInfo getSkuById(String skuId) {
-        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
-        pmsSkuInfo.setId(skuId);
+//    @Override
+//    public PmsSkuInfo getSkuById(String skuId) {
+//        PmsSkuInfo pmsSkuInfo = new PmsSkuInfo();
+//        pmsSkuInfo.setId(skuId);
+//
+//        PmsSkuInfo skuInfo = pmsSkuInfoMapper.selectOne(pmsSkuInfo);
+//        return skuInfo;
+//    }
 
-        PmsSkuInfo skuInfo = pmsSkuInfoMapper.selectOne(pmsSkuInfo);
-        return skuInfo;
-    }
+//    @Override
+//    public List<PmsSkuInfo> getAllSku(String catalog3Id) {
+//        List<PmsSkuInfo> pmsSkuInfos = pmsSkuInfoMapper.selectAll();
+//
+//        for (PmsSkuInfo pmsSkuInfo : pmsSkuInfos) {
+//            String skuId = pmsSkuInfo.getId();
+//
+//            PmsSkuAttrValue pmsSkuAttrValue = new PmsSkuAttrValue();
+//            pmsSkuAttrValue.setSkuId(skuId);
+//            List<PmsSkuAttrValue> select = pmsSkuAttrValueMapper.select(pmsSkuAttrValue);
+//
+//            pmsSkuInfo.setSkuAttrValueList(select);
+//        }
+//        return pmsSkuInfos;
+//    }
+
 
 
 }
