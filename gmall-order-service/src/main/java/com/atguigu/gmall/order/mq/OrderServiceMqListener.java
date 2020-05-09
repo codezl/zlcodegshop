@@ -17,7 +17,7 @@ public class OrderServiceMqListener {
     OrderService orderService;
 
     @JmsListener(destination = "PAYMENT_SUCCESS",containerFactory = "")
-    public void updataOrderProcessStatus(MapMessage mapMessage) throws JMSException {
+    public void consumePaymentResult(MapMessage mapMessage) throws JMSException {
 
         String out_trade_no = mapMessage.getString("out_trade_no");
 
