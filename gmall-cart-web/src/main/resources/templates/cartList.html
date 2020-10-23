@@ -9,6 +9,9 @@
     <script src="/js/jquery-3.1.1.min.js" charset="utf-8"></script>
     <link rel="stylesheet" href="/css/One_mainFoot.css">
     <link rel="stylesheet" href="/css/font-awesome-4.7.0/css/font-awesome.css" />
+    <style>
+        .orbtn:hover{color: #EEBB22;cursor: pointer}
+    </style>
 </head>
 <body>
 <header>
@@ -18,17 +21,20 @@
             <ul class="header-left">
                 <li>
 
-                    <a href="">首页</a>
+                    <a href="http://search.gmall.com:8083/index">首页</a>
                 </li>
 
             </ul>
             <ul class="header-right">
                 <li><a href="http://passport.gmall.com:8085/index?ReturnUrl=http://cart.gmall.com:8084/cartList" style="color: red;">你好，请登录</a></li>
-                <li><a href="../注册页面\index.html" >免费注册</a></li>
+                <li><a href="http://localhost/2020user_register.html" >免费注册</a></li>
                 <li class="spacer"></li>
-                <li><a href="">我的订单</a></li>
+                <li class="orbtn" th:onclick="'tomyor('+${memberId}+')'">我的订单</li>
+                <li class="orbtn" th:onclick="'tomy_addr('+${memberId}+')'">我的收货地址</li>
                 <li class="spacer"></li>
-
+                <li class="spacer"></li>
+                <li class="orbtn" th:onclick="'to_info('+${memberId}+')'">个人信息</li>
+                <li class="spacer"></li>
             </ul>
             <div style="clear: both;"></div>
         </div>
@@ -98,7 +104,7 @@
             </dl>
     </div>
     <div>
-        <button type="button">删除</button>
+        <button type="button" onclick="del1()">删除</button>
 
     </div>
 </div>
@@ -158,9 +164,9 @@
 
 
 
-
+<!--<a href="http://localhost/2020index.html">nihao</a>-->
 <!--底部-->
-
+<input class="memeberId" style="display: none" th:value="${memberId}"/>
 <div class="one_footer">
 
 </div>
@@ -175,6 +181,59 @@
         window.location.href="http://item.gmall.com:8084/"+skuId+".html";
     }
 
+    function tomyor(memberId) {
+        window.location.href="http://localhost/2020order_list_1.html?id="+memberId;
+    }
+
+     function to_info(memberId) {
+         window.location.href="http://localhost/2020user_edit_info.html?id="+memberId;
+     }
+
+     function tomy_addr(memberId) {
+         var memberid = $(".memeberId").val();
+         alert(memberid);
+         if(memberid==null || memberid == undefined){
+             //
+             window.location.href="http://localhost/2020index.html?userid=";
+         }else{
+             alert("未登陆，")
+             window.location.href="http://localhost/2020index.html?userid="+memberid;
+         }
+             }
+
+    function delc(skuId) {
+         var memberid = $(".memeberId").val();
+         alert(memberid);
+         $.post("delCart","skuId="+skuId+"&"+"memberId="+memberid,function (html) {
+            //内嵌页面，异步刷新
+            //window.location.href="http://localhost/2020index.html?userid="+1;
+            alert(html);
+          $("#cartListInner").html(html);
+
+       });
+    }
+
+    function delchk() {
+        var memberid = $(".memeberId").val();
+        alert(memberid);
+        $.post("delchk","memberId="+memberid,function (html) {
+            //内嵌页面，异步刷新
+            //window.location.href="http://localhost/2020index.html?userid="+1;
+            alert(html);
+            $("#cartListInner").html(html);
+        });
+        }
+
+    function chkall() {
+        var memberid = $(".memeberId").val();
+        alert(memberid);
+        $.post("delchk","memberId="+memberid,function (html) {
+            //内嵌页面，异步刷新
+            //window.location.href="http://localhost/2020index.html?userid="+1;
+            alert(html);
+            $("#cartListInner").html(html);
+        });
+    }
 
     function login(){
       var s = encodeURIComponent("http://cart.gmall.com:8087/cartList");
@@ -365,16 +424,16 @@
         }
     })
     //删除已选的商品
-    $(".One_ShopFootBuy>div:first-child ul li:nth-child(2)").click(function(){
-        // $(".check").each(function(){
-        if($(".check").is(":checked")==false){
-            $(".One_mb").show();
-            $(".One_moveGzIfNull").show();
-        }else{
-            $(".One_mb").show();     //蒙版显示
-            $(".One_isDel").show();  //删除弹框显示
-            $(".One_moveGzIfNull").hide();
-        }
+    // $(".One_ShopFootBuy>div:first-child ul li:nth-child(2)").click(function(){
+    //     // $(".check").each(function(){
+    //     if($(".check").is(":checked")==false){
+    //         $(".One_mb").show();
+    //         $(".One_moveGzIfNull").show();
+    //     }else{
+    //         $(".One_mb").show();     //蒙版显示
+    //         $(".One_isDel").show();  //删除弹框显示
+    //         $(".One_moveGzIfNull").hide();
+    //     }
         //移除结账固定定位
         // if($(".check").length==1){
         // 	$(".fix").remove();
@@ -395,61 +454,61 @@
                 $(".fnt").html("￥ 0.00");
             }
         })*/
-    })
-    //确定删除弹框移入我的关注
-    $(".One_isDel>div:last-child button:last-child").click(function(){
-        $(".One_isDel").hide();
-        $(".One_mb").show();
-        $(".One_DengLu").show();
-    })
+    // })
+    // //确定删除弹框移入我的关注
+    // $(".One_isDel>div:last-child button:last-child").click(function(){
+    //     $(".One_isDel").hide();
+    //     $(".One_mb").show();
+    //     $(".One_DengLu").show();
+    // })
     //移到我的关注
-    $(".One_ShopFootBuy>div:first-child ul li:nth-child(3)").click(function(){
-        $(".check").each(function(index){
-            if($(this).is(":checked")==false){
-                $(".One_mb").show();
-                $(".One_moveGzIfNull").show();
-            }else{
-                $(".One_mb").show();
-                $(".One_moveMyGz").show();
-                $(".One_moveGzIfNull").hide();
-            }
-        })
-    })
-    //点击×号关闭
-    $(".One_moveGzIfNull>p span:last-child img").click(function(){
-        $(".One_mb").hide();
-        $(".One_moveGzIfNull").hide();
-    })
-    $(".One_moveMyGz>p span:last-child img").click(function(){
-        $(".One_mb").hide();
-        $(".One_moveMyGz").hide();
-        $(".One_moveGzIfNull").hide();
-    })
-    $(".One_clearShop>p span:last-child img").click(function(){
-        $(".One_mb").hide();
-        $(".One_clearShop").hide();
-    })
-    //移到我的关注取消按钮点击关闭
-    $(".One_moveMyGz>div:last-child button:last-child").click(function(){
-        $(".One_mb").hide();
-        $(".One_moveMyGz").hide();
-    })
-    //移到我的关注确定按钮点击登录弹框弹出
-    $(".One_moveMyGz>div:last-child button:first-child").click(function(){
-        $(".One_moveMyGz").hide();
-        $(".One_mb").show();
-        $(".One_DengLu").show();
-    })
-
-    $(".One_DengLu>p:first-child span:last-child img").click(function(){
-        $(".One_mb").hide();
-        $(".One_DengLu").hide();
-    })
-    //清除下柜商品
-    $(".One_ShopFootBuy>div:first-child ul li:nth-child(4)").click(function(){
-        $(".One_mb").show();
-        $(".One_clearShop").show()
-    })
+    // $(".One_ShopFootBuy>div:first-child ul li:nth-child(3)").click(function(){
+    //     $(".check").each(function(index){
+    //         if($(this).is(":checked")==false){
+    //             $(".One_mb").show();
+    //             $(".One_moveGzIfNull").show();
+    //         }else{
+    //             $(".One_mb").show();
+    //             $(".One_moveMyGz").show();
+    //             $(".One_moveGzIfNull").hide();
+    //         }
+    //     })
+    // })
+    // //点击×号关闭
+    // $(".One_moveGzIfNull>p span:last-child img").click(function(){
+    //     $(".One_mb").hide();
+    //     $(".One_moveGzIfNull").hide();
+    // })
+    // $(".One_moveMyGz>p span:last-child img").click(function(){
+    //     $(".One_mb").hide();
+    //     $(".One_moveMyGz").hide();
+    //     $(".One_moveGzIfNull").hide();
+    // })
+    // $(".One_clearShop>p span:last-child img").click(function(){
+    //     $(".One_mb").hide();
+    //     $(".One_clearShop").hide();
+    // })
+    // //移到我的关注取消按钮点击关闭
+    // $(".One_moveMyGz>div:last-child button:last-child").click(function(){
+    //     $(".One_mb").hide();
+    //     $(".One_moveMyGz").hide();
+    // })
+    // //移到我的关注确定按钮点击登录弹框弹出
+    // $(".One_moveMyGz>div:last-child button:first-child").click(function(){
+    //     $(".One_moveMyGz").hide();
+    //     $(".One_mb").show();
+    //     $(".One_DengLu").show();
+    // })
+    //
+    // $(".One_DengLu>p:first-child span:last-child img").click(function(){
+    //     $(".One_mb").hide();
+    //     $(".One_DengLu").hide();
+    // })
+    // //清除下柜商品
+    // $(".One_ShopFootBuy>div:first-child ul li:nth-child(4)").click(function(){
+    //     $(".One_mb").show();
+    //     $(".One_clearShop").show()
+    // })
     //购物车+ -
     //鼠标移入变小手
     $(".One_ShopCon ul li>div:nth-child(2) ol>li:nth-child(4) p:first-child span").mouseover(function(){

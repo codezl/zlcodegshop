@@ -22,6 +22,7 @@
         <module name="gmall-redisson-test" />
         <module name="gmall-search-service" />
         <module name="gmall-search-web" />
+        <module name="gmall-seckill" />
         <module name="gmall-service-util" />
         <module name="gmall-user" />
         <module name="gmall-user-service" />
@@ -53,6 +54,7 @@
       <module name="gmall-redisson-test" target="1.8" />
       <module name="gmall-search-service" target="1.8" />
       <module name="gmall-search-web" target="1.8" />
+      <module name="gmall-seckill" target="1.8" />
       <module name="gmall-service-util" target="1.8" />
       <module name="gmall-user" target="1.8" />
       <module name="gmall-user-service" target="1.8" />
@@ -81,6 +83,7 @@
       <module name="gmall-redisson-test" options="" />
       <module name="gmall-search-service" options="" />
       <module name="gmall-search-web" options="" />
+      <module name="gmall-seckill" options="" />
       <module name="gmall-service-util" options="" />
       <module name="gmall-user" options="" />
       <module name="gmall-user-service" options="" />

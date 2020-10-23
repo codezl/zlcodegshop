@@ -194,6 +194,7 @@ public class OrderContrller {
         modelMap.put("totalAmount", getTotalAmount(omsCartItems));
 
 
+        modelMap.put("nickname",nickname);
         //生成交易吗，提交时校验
         String tradeCode = orderService.genTradeCode(memberId);
         modelMap.put("tradeCode", tradeCode);

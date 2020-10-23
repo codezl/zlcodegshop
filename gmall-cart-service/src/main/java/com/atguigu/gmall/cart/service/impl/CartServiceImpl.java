@@ -47,7 +47,6 @@ public class CartServiceImpl implements CartService {
         e.createCriteria().andEqualTo("id",omsCartItemFromDb.getId());
 
         omsCartItemMapper.updateByExampleSelective(omsCartItemFromDb,e);
-
     }
 
     @Override
@@ -79,7 +78,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<OmsCartItem> cartList(String userId) {
-
+        flushCartCache(userId);
         Jedis jedis = null;
         List<OmsCartItem> omsCartItems = new ArrayList<>();
         try{
@@ -100,6 +99,13 @@ public class CartServiceImpl implements CartService {
             jedis.close();
         }
 
+        if (omsCartItems==null){
+            OmsCartItem omsCartItem = new OmsCartItem();
+            omsCartItem.setMemberId(userId);
+            omsCartItems = omsCartItemMapper.select(omsCartItem);
+            return omsCartItems;
+        }
+
         return omsCartItems;
     }
 
@@ -109,6 +115,44 @@ public class CartServiceImpl implements CartService {
         Example e = new Example(OmsCartItem.class);
 
         e.createCriteria().andEqualTo("memberId",omsCartItem.getMemberId()).andEqualTo("productSkuId",omsCartItem.getProductSkuId());
+
+        omsCartItemMapper.updateByExampleSelective(omsCartItem,e);
+
+        //缓存同步
+        flushCartCache(omsCartItem.getMemberId());
+    }
+
+    @Override
+    public void delcart(String skuId, String memberId) {
+
+        OmsCartItem omsCartItem = new OmsCartItem();
+        omsCartItem.setMemberId(memberId);
+        omsCartItem.setProductSkuId(skuId);
+
+        omsCartItemMapper.delete(omsCartItem);
+
+
+        //缓存同步
+        flushCartCache(memberId);
+    }
+
+    @Override
+    public void delchk(String memberId, String ischk) {
+        OmsCartItem omsCartItem = new OmsCartItem();
+        omsCartItem.setMemberId(memberId);
+        omsCartItem.setIsChecked(ischk);
+        omsCartItemMapper.delete(omsCartItem);
+
+
+        //缓存同步
+        flushCartCache(memberId);
+    }
+
+    @Override
+    public void chkall(OmsCartItem omsCartItem) {
+        Example e = new Example(OmsCartItem.class);
+
+        e.createCriteria().andEqualTo("memberId",omsCartItem.getMemberId());
 
         omsCartItemMapper.updateByExampleSelective(omsCartItem,e);
 

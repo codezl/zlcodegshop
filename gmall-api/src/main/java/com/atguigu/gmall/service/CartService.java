@@ -16,4 +16,11 @@ public interface CartService {
     List<OmsCartItem> cartList(String userId);
 
     void checkCart(OmsCartItem omsCartItem);
+
+    void delcart(String skuId, String memberId);
+
+    void delchk(String memberId, String ischk);
+
+
+    void chkall(OmsCartItem omsCartItem);
 }

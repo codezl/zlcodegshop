@@ -80,8 +80,16 @@ public class AttrServiceImpl implements AttrService {
 
             // 删除后，将新的属性值插入
             List<PmsBaseAttrValue> attrValueList = pmsBaseAttrInfo.getAttrValueList();
-            for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
-                pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
+
+           //后期添加修改功能
+            if(attrValueList.isEmpty()){
+                PmsBaseAttrInfo pmsBaseAttrInfo1Del = new PmsBaseAttrInfo();
+                pmsBaseAttrInfo1Del.setId(pmsBaseAttrInfo.getId());
+                pmsBaseAttrInfoMapper.delete(pmsBaseAttrInfo1Del);
+            }else {
+                for (PmsBaseAttrValue pmsBaseAttrValue : attrValueList) {
+                    pmsBaseAttrValueMapper.insertSelective(pmsBaseAttrValue);
+                }
             }
 
         }

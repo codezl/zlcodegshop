@@ -29,6 +29,8 @@
 					<li th:text="'你好，'+${nickName}"> </li>
 					<li>|</li>
 					<li class="spacer"></li>
+					<li><button type="button" onclick="myorder()">我的订单</button></li>
+					<input name="tradeCode" type="hidden"  th:value="${memberId}"  />
 					<li><a href="">我的订单</a></li>
 					<li class="spacer"></li>
 
@@ -136,6 +138,7 @@
 		</form>
 		<script>
 
+
 			function changeAddress(){
 				var receiveAddressId = $("input[name='deliveryAddress']:checked").val();
 				var orderNo = $("input[name='orderNote']").val();
@@ -183,9 +186,13 @@
                 })
             })
 
+			function myorder() {
+				window.location.href="http://localhost/2020index.html?userid="+1;
+			}
+
 
 
 		</script>
 	</body>
 
-</html
+</html>

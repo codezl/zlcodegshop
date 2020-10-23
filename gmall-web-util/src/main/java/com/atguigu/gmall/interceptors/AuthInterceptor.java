@@ -19,8 +19,6 @@ import java.util.Map;
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-
-
         //拦截代码
 
         //判断被拦截的请求方法注解

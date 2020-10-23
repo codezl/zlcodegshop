@@ -31,6 +31,87 @@ public class CartController {
     CartService cartService;
 
 
+    @RequestMapping("tomy_addr")
+    @LoginRequired(loginSuccess = true)
+    public String tomy_addr(String memberId,HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap modelMap) {
+
+        String nickname = (String) request.getAttribute("nickname");
+        //调用服务shanchu
+       int num = Integer.parseInt(memberId);
+
+        return "redirect:http://localhost/2020order_list_1.html?id="+num;
+    }
+
+    @RequestMapping("chkall")
+    @LoginRequired(loginSuccess = false)
+    public String chkall(String memberId,HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap modelMap) {
+
+
+        String nickname = (String) request.getAttribute("nickname");
+        //调用服务shanchu
+        OmsCartItem omsCartItem = new OmsCartItem();
+        omsCartItem.setMemberId(memberId);
+        String str = "1";
+        omsCartItem.setIsChecked(str);
+        cartService.chkall(omsCartItem);
+
+        //将最新你数据从缓存中渲染到内嵌页面
+        List<OmsCartItem> omsCartItems = cartService.cartList(memberId);
+        modelMap.put("cartList",omsCartItems);
+
+        //勾选商品总价
+        BigDecimal totalAmount = getTotalAmount(omsCartItems);
+        modelMap.put("totalAmount",totalAmount);
+
+        return "cartListInner";
+    }
+        @RequestMapping("delchk")
+    @LoginRequired(loginSuccess = false)
+    public String delchk(String memberId,HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap modelMap) {
+
+        String nickname = (String) request.getAttribute("nickname");
+        //调用服务shanchu
+        OmsCartItem omsCartItem = new OmsCartItem();
+        omsCartItem.setMemberId(memberId);
+        String ischk = "1";
+        omsCartItem.setIsChecked(ischk);
+        cartService.delchk(memberId,ischk);
+
+        //将最新你数据从缓存中渲染到内嵌页面
+        List<OmsCartItem> omsCartItems = cartService.cartList(memberId);
+        modelMap.put("cartList",omsCartItems);
+
+        //勾选商品总价
+        BigDecimal totalAmount = getTotalAmount(omsCartItems);
+        modelMap.put("totalAmount",totalAmount);
+
+        return "cartListInner";
+    }
+
+
+        @RequestMapping("delCart")
+    @LoginRequired(loginSuccess = false)
+    public String delCart(String skuId,String memberId,HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap modelMap) {
+
+
+        String nickname = (String) request.getAttribute("nickname");
+        //调用服务修改
+        OmsCartItem omsCartItem = new OmsCartItem();
+        omsCartItem.setMemberId(memberId);
+        omsCartItem.setProductSkuId(skuId);
+        cartService.delcart(skuId,memberId);
+
+
+        //将最新你数据从缓存中渲染到内嵌页面
+        List<OmsCartItem> omsCartItems = cartService.cartList(memberId);
+        modelMap.put("cartList",omsCartItems);
+
+        //勾选商品总价
+        BigDecimal totalAmount = getTotalAmount(omsCartItems);
+        modelMap.put("totalAmount",totalAmount);
+
+        return "cartListInner";
+    }
         @RequestMapping("checkCart")
         @LoginRequired(loginSuccess = false)
     public String checkCart(String isChecked,String skuId,HttpServletRequest request, HttpServletResponse response, HttpSession session, ModelMap modelMap){
@@ -85,6 +166,7 @@ public class CartController {
         //勾选商品总价
         BigDecimal totalAmount = getTotalAmount(omsCartItems);
         modelMap.put("totalAmount",totalAmount);
+        modelMap.put("memberId",memberId);
 
         return "cartList";
     }
