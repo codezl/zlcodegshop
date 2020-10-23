@@ -1,7 +1,5 @@
 #微服务端口配置
 
-# gmall0105
-
 #gmall-user服务8080
 
 gmall-user-service服务8070
